@@ -1,0 +1,19 @@
+{
+  "name": "penguin-reto-01-store",
+  "version": "1.0.0",
+  "description": "Tienda online y panel administrativo con Node.js, Express, MongoDB y renderizado del lado servidor.",
+  "main": "backend/app.js",
+  "scripts": {
+    "start:admin": "node backend/app.js",
+    "start:store": "node frontend/app.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "mongodb",
+    "pug",
+    "ssr"
+  ],
+  "author": "",
+  "license": "MIT"
+}
