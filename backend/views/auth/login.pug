@@ -1,0 +1,52 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    title= title
+
+    link(rel="stylesheet" href="/css/admin.css")
+
+  body
+    main.login-container
+      section.login-card
+        h1 Penguin Store Admin
+
+        p Inicia sesión para acceder al panel administrativo.
+
+        if error
+          .validation-errors
+            p= error
+
+        form(
+          action="/login"
+          method="POST"
+        )
+          .form-group
+            label(for="username") Usuario
+
+            input(
+              type="text"
+              id="username"
+              name="username"
+              value=username
+              autocomplete="username"
+              required
+              autofocus
+            )
+
+          .form-group
+            label(for="password") Contraseña
+
+            input(
+              type="password"
+              id="password"
+              name="password"
+              autocomplete="current-password"
+              required
+            )
+
+          button.button.button-full(
+            type="submit"
+          ) Iniciar sesión
