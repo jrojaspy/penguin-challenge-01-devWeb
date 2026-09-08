@@ -20,10 +20,18 @@ block content
         p
           | Stock disponible: #{product.stock}
 
-      section.order-form-card
+      section.order-form-card(
+        aria-labelledby="order-form-title"
+      )
+        h2#order-form-title
+          | Datos del pedido
+
         if errors && errors.length
-          .validation-errors
-            strong Revisa los siguientes datos:
+          .validation-errors(
+            role="alert"
+          )
+            strong
+              | Revisa los siguientes datos:
 
             ul
               each error in errors
@@ -40,7 +48,8 @@ block content
           )
 
           .form-group
-            label(for="customerName") Nombre
+            label(for="customerName")
+              | Nombre
 
             input(
               type="text"
@@ -48,21 +57,25 @@ block content
               name="customerName"
               value=formData.customerName
               maxlength="120"
+              autocomplete="name"
               required
             )
 
           .form-group
-            label(for="address") Dirección del iglú
+            label(for="address")
+              | Dirección del iglú
 
             textarea(
               id="address"
               name="address"
               maxlength="300"
+              autocomplete="street-address"
               required
             )= formData.address
 
           .form-group
-            label(for="quantity") Cantidad
+            label(for="quantity")
+              | Cantidad
 
             input(
               type="number"
@@ -72,8 +85,10 @@ block content
               min="1"
               max=product.stock
               step="1"
+              inputmode="numeric"
               required
             )
 
-          button.button(type="submit")
-            | Confirmar pedido
+          button.button(
+            type="submit"
+          ) Confirmar pedido

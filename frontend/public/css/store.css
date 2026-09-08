@@ -384,3 +384,11 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}

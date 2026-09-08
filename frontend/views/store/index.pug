@@ -5,16 +5,18 @@ block content
     h1 Tienda de los Pingüinos
 
     p
-      | Productos disponibles para los pingüinos
-      | más exigentes de la Antártida.
+      | Compra productos desde tu iglú
+      | mediante una experiencia completamente
+      | renderizada desde el servidor.
 
-  section.catalog
+  section.catalog(
+    aria-labelledby="catalog-title"
+  )
     .section-header
-      div
-        h2 Productos
+      h2#catalog-title Productos
 
-        p
-          | Explora nuestro catálogo disponible.
+      p
+        | Explora los productos disponibles.
 
     if products.length === 0
       .empty-state
@@ -30,16 +32,19 @@ block content
             .product-card-content
               h3= product.name
 
-              p.product-description= product.description
+              p.product-description
+                = product.description
 
               .product-meta
                 span.product-price
                   | #{product.price.toLocaleString('es-PY')} Gs.
 
                 if product.stock > 0
-                  span.stock.stock-available Disponible
+                  span.stock.stock-available
+                    | Disponible
                 else
-                  span.stock.stock-empty Sin stock
+                  span.stock.stock-empty
+                    | Sin stock
 
               a.button(
                 href=`/products/${product._id}`

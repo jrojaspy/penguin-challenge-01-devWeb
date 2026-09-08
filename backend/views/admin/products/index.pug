@@ -1,76 +1,70 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title= title
+extends ../layout
 
-    link(rel="stylesheet" href="/css/admin.css")
+block content
+  section.page-section
+    .page-header
+      div
+        h1 Productos
 
-  body
-    header.admin-header
-      h1 Penguin Store Admin
+        p
+          | Gestiona los productos disponibles
+          | en Penguin Store.
 
-      nav
-        a(href="/admin") Inicio
-        a(href="/admin/products") Productos
-        a(href="/admin/orders") Pedidos
+      a.button(
+        href="/admin/products/new"
+      ) Nuevo producto
 
-        form.logout-form(
-          action="/logout"
-          method="POST"
-        )
-          button.logout-button(
-            type="submit"
-          ) Cerrar sesión
+    if products.length === 0
+      section.empty-state(
+        aria-labelledby="empty-products-title"
+      )
+        h2#empty-products-title
+          | No hay productos registrados
 
-    main.container
-      .page-header
-        div
-          h2 Productos
-          p Gestión del catálogo de Penguin Store.
+        p
+          | El catálogo todavía está vacío.
 
-        a.button(href="/admin/products/new") Nuevo producto
+        a.button(
+          href="/admin/products/new"
+        ) Crear primer producto
 
-      if products.length === 0
-        section.empty-state
-          h3 No hay productos registrados
+    else
+      .table-wrapper
+        table.products-table
+          caption.sr-only
+            | Listado de productos
 
-          p El catálogo todavía está vacío.
+          thead
+            tr
+              th(scope="col") Nombre
+              th(scope="col") Precio
+              th(scope="col") Stock
+              th(scope="col") Estado
+              th(scope="col") Acciones
 
-          a.button(href="/admin/products/new") Crear primer producto
-
-      else
-        .table-wrapper
-          table.products-table
-            thead
+          tbody
+            each product in products
               tr
-                th Nombre
-                th Precio
-                th Stock
-                th Estado
-                th Acciones
+                td
+                  strong= product.name
 
-            tbody
-              each product in products
-                tr
-                  td
-                    strong= product.name
+                  if product.description
+                    p.product-description
+                      = product.description
 
-                    if product.description
-                      .product-description= product.description
+                td
+                  | #{product.price.toLocaleString('es-PY')} Gs.
 
-                  td= `${product.price.toLocaleString('es-PY')} Gs.`
+                td= product.stock
 
-                  td= product.stock
+                td
+                  if product.active
+                    span.status.status-active Activo
+                  else
+                    span.status.status-inactive Inactivo
 
-                  td
-                    if product.active
-                      span.status.status-active Activo
-                    else
-                      span.status.status-inactive Inactivo
-
-                  td.actions
+                td
+                  .actions
                     a.button.button-small(
                       href=`/admin/products/${product._id}/edit`
                     ) Editar

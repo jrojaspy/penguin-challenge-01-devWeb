@@ -17,9 +17,14 @@ html(lang="es")
   body
     header.store-header
       .container.header-content
-        a.brand(href="/") Penguin Store
+        a.brand(
+          href="/"
+          aria-label="Penguin Store - Inicio"
+        ) Penguin Store
 
-        nav
+        nav(
+          aria-label="Navegación principal"
+        )
           a(href="/") Productos
 
     main.container
@@ -27,4 +32,5 @@ html(lang="es")
 
     footer.store-footer
       .container
-        p Penguin Store — Tienda online
+        p
+          | Penguin Store — Tienda online de la Antártida

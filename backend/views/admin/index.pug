@@ -1,42 +1,28 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+extends layout
 
-    title= title
+block content
+  section.dashboard-hero
+    h1 Panel administrativo
 
-    link(rel="stylesheet" href="/css/admin.css")
+    p
+      | Gestiona productos y revisa los pedidos
+      | realizados desde la tienda pública.
 
-  body
-    header.admin-header
-      div
-        h1 Penguin Store Admin
+  section.dashboard-actions(
+    aria-label="Acciones principales"
+  )
+    a.dashboard-card(
+      href="/admin/products"
+    )
+      span.dashboard-card-title Productos
 
-        if currentUser
-          small Usuario: #{currentUser.username}
+      span.dashboard-card-description
+        | Crear, editar y eliminar productos del catálogo.
 
-    nav
-      a(href="/admin") Inicio
-      a(href="/admin/products") Productos
-      a(href="/admin/orders") Pedidos
+    a.dashboard-card(
+      href="/admin/orders"
+    )
+      span.dashboard-card-title Pedidos
 
-      form.logout-form(
-        action="/logout"
-        method="POST"
-      )
-        button.logout-button(
-          type="submit"
-        ) Cerrar sesión
-
-    main.container
-      h2 Panel administrativo
-
-      p Bienvenida al panel de gestión de Penguin Store.
-
-    .dashboard-actions
-      a.button(href="/admin/products")
-        | Gestionar productos
-
-      a.button(href="/admin/orders")
-        | Ver pedidos
+      span.dashboard-card-description
+        | Revisar los pedidos recibidos desde la tienda.

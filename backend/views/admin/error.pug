@@ -1,17 +1,14 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title= title
+extends layout
 
-    link(rel="stylesheet" href="/css/admin.css")
+block content
+  section.error-state(
+    role="alert"
+  )
+    h1= title
 
-  body
-    main.container
-      section.error-state
-        h1 Ocurrió un error
+    p= message
 
-        p= message
-
-        a.button(href="/admin/products") Volver a productos
+    .error-actions
+      a.button(
+        href="/admin"
+      ) Volver al panel

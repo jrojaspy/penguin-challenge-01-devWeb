@@ -9,7 +9,8 @@ block content
 
     dl.order-summary
       dt Número de pedido
-      dd= order._id
+      dd
+        | ##{order._id.toString().slice(-6).toUpperCase()}
 
       dt Cliente
       dd= order.customerName
@@ -22,16 +23,19 @@ block content
         dd= item.productName
 
         dt Precio unitario
-        dd #{item.unitPrice.toLocaleString('es-PY')} Gs.
+        dd
+          | #{item.unitPrice.toLocaleString('es-PY')} Gs.
 
         dt Cantidad
         dd= item.quantity
 
         dt Subtotal
-        dd #{item.subtotal.toLocaleString('es-PY')} Gs.
+        dd
+          | #{item.subtotal.toLocaleString('es-PY')} Gs.
 
       dt Total
       dd.total
         | #{order.total.toLocaleString('es-PY')} Gs.
 
-    a.button(href="/") Volver a la tienda
+    a.button(href="/")
+      | Volver a la tienda

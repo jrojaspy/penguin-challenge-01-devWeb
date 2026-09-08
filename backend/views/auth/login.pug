@@ -2,21 +2,34 @@ doctype html
 html(lang="es")
   head
     meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    meta(
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    )
 
-    title= title
+    title Iniciar sesión | Penguin Store Admin
 
-    link(rel="stylesheet" href="/css/admin.css")
+    link(
+      rel="stylesheet"
+      href="/css/admin.css"
+    )
 
-  body
+  body.login-page
     main.login-container
-      section.login-card
-        h1 Penguin Store Admin
+      section.login-card(
+        aria-labelledby="login-title"
+      )
+        h1#login-title
+          | Penguin Store Admin
 
-        p Inicia sesión para acceder al panel administrativo.
+        p.login-description
+          | Inicia sesión para gestionar
+          | productos y pedidos.
 
         if error
-          .validation-errors
+          .validation-errors(
+            role="alert"
+          )
             p= error
 
         form(

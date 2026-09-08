@@ -1,0 +1,47 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    )
+
+    title #{title} | Penguin Store Admin
+
+    link(
+      rel="stylesheet"
+      href="/css/admin.css"
+    )
+
+  body
+    header.admin-header
+      .admin-header-inner
+        .admin-brand
+          a(href="/admin") Penguin Store Admin
+
+          if currentUser
+            span.admin-user
+              | Usuario: #{currentUser.username}
+
+        nav.admin-nav(
+          aria-label="Navegación administrativa"
+        )
+          a(href="/admin") Inicio
+          a(href="/admin/products") Productos
+          a(href="/admin/orders") Pedidos
+
+          form.logout-form(
+            action="/logout"
+            method="POST"
+          )
+            button.logout-button(
+              type="submit"
+            ) Cerrar sesión
+
+    main.container
+      block content
+
+    footer.admin-footer
+      .container
+        p Penguin Store — Panel administrativo
