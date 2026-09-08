@@ -21,10 +21,15 @@ html(lang="es")
           h2 Productos
           p Gestión del catálogo de Penguin Store.
 
+        a.button(href="/admin/products/new") Nuevo producto
+
       if products.length === 0
         section.empty-state
           h3 No hay productos registrados
+
           p El catálogo todavía está vacío.
+
+          a.button(href="/admin/products/new") Crear primer producto
 
       else
         .table-wrapper
@@ -35,12 +40,16 @@ html(lang="es")
                 th Precio
                 th Stock
                 th Estado
-                th Creado
+                th Acciones
 
             tbody
               each product in products
                 tr
-                  td= product.name
+                  td
+                    strong= product.name
+
+                    if product.description
+                      .product-description= product.description
 
                   td= `${product.price.toLocaleString('es-PY')} Gs.`
 
@@ -52,4 +61,15 @@ html(lang="es")
                     else
                       span.status.status-inactive Inactivo
 
-                  td= product.createdAt.toLocaleDateString('es-PY')
+                  td.actions
+                    a.button.button-small(
+                      href=`/admin/products/${product._id}/edit`
+                    ) Editar
+
+                    form(
+                      action=`/admin/products/${product._id}/delete`
+                      method="POST"
+                    )
+                      button.button.button-danger.button-small(
+                        type="submit"
+                      ) Eliminar

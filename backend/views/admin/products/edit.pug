@@ -1,0 +1,98 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title= title
+
+    link(rel="stylesheet", href="/css/admin.css")
+
+  body
+    header.admin-header
+      h1 Penguin Store Admin
+
+      nav
+        a(href="/") Inicio
+        a(href="/admin/products") Productos
+
+    main.container
+      .page-header
+        div
+          h2 Editar producto
+          p Modifica los datos del producto.
+
+      if errors && errors.length
+        .validation-errors
+          strong Revisa los siguientes campos:
+          ul
+            each error in errors
+              li= error
+
+      form.product-form(
+        action=`/admin/products/${product._id}/edit`
+        method="POST"
+      )
+        .form-group
+          label(for="name") Nombre
+
+          input(
+            type="text"
+            id="name"
+            name="name"
+            value=product.name
+            maxlength="120"
+            required
+          )
+
+        .form-group
+          label(for="description") Descripción
+
+          textarea(
+            id="description"
+            name="description"
+            maxlength="500"
+            required
+          )= product.description
+
+        .form-group
+          label(for="price") Precio en guaraníes
+
+          input(
+            type="number"
+            id="price"
+            name="price"
+            value=product.price
+            min="0"
+            step="1"
+            required
+          )
+
+        .form-group
+          label(for="stock") Stock
+
+          input(
+            type="number"
+            id="stock"
+            name="stock"
+            value=product.stock
+            min="0"
+            step="1"
+            required
+          )
+
+        .form-group.checkbox-group
+          input(
+            type="checkbox"
+            id="active"
+            name="active"
+            checked=product.active
+          )
+
+          label(for="active") Producto activo
+
+        .form-actions
+          button.button(type="submit") Guardar cambios
+
+          a.button.button-secondary(
+            href="/admin/products"
+          ) Cancelar
