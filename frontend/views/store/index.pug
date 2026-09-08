@@ -1,16 +1,46 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title= title
+extends ../layout
 
-  body
-    h1 Penguin Store
+block content
+  section.hero
+    h1 Tienda de los Pingüinos
 
-    p Tienda pública funcionando.
+    p
+      | Productos disponibles para los pingüinos
+      | más exigentes de la Antártida.
 
-    p Próximamente podrás:
-    ul
-      li Consultar productos
-      li Realizar pedidos
+  section.catalog
+    .section-header
+      div
+        h2 Productos
+
+        p
+          | Explora nuestro catálogo disponible.
+
+    if products.length === 0
+      .empty-state
+        h3 No hay productos disponibles
+
+        p
+          | El catálogo está vacío por el momento.
+
+    else
+      .product-grid
+        each product in products
+          article.product-card
+            .product-card-content
+              h3= product.name
+
+              p.product-description= product.description
+
+              .product-meta
+                span.product-price
+                  | #{product.price.toLocaleString('es-PY')} Gs.
+
+                if product.stock > 0
+                  span.stock.stock-available Disponible
+                else
+                  span.stock.stock-empty Sin stock
+
+              a.button(
+                href=`/products/${product._id}`
+              ) Ver producto
