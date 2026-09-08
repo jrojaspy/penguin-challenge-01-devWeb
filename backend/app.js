@@ -9,6 +9,7 @@ const connectDatabase = require('../shared/config/database');
 
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 const requireAuth = require('./middleware/requireAuth');
 const sessionUser = require('./middleware/sessionUser');
@@ -65,6 +66,12 @@ app.use(
   '/admin/products',
   requireAuth,
   productRoutes
+);
+
+app.use(
+  '/admin/orders',
+  requireAuth,
+  orderRoutes
 );
 
 async function startServer() {

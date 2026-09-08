@@ -1,0 +1,101 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+    title= title
+
+    link(rel="stylesheet", href="/css/admin.css")
+
+  body
+    header.admin-header
+      div
+        h1 Penguin Store Admin
+
+        if currentUser
+          small Usuario: #{currentUser.username}
+
+      nav
+        a(href="/admin") Inicio
+        a(href="/admin/products") Productos
+        a(href="/admin/orders") Pedidos
+
+        form.logout-form(
+          action="/logout"
+          method="POST"
+        )
+          button.logout-button(
+            type="submit"
+          ) Cerrar sesión
+
+    main.container
+      .page-header
+        div
+          h2 Pedidos
+          p Pedidos realizados desde la tienda pública.
+
+      if orders.length === 0
+        section.empty-state
+          h3 No hay pedidos registrados
+
+          p
+            | Los pedidos realizados desde la tienda
+            | aparecerán aquí.
+
+      else
+        .orders-list
+          each order in orders
+            article.order-card
+              .order-card-header
+                div
+                  h3 Pedido #{order._id}
+
+                  p.order-date
+                    | #{order.createdAt.toLocaleString('es-PY')}
+
+                if order.status === 'pending'
+                  span.status.status-pending Pendiente
+
+                else if order.status === 'completed'
+                  span.status.status-active Completado
+
+                else
+                  span.status.status-inactive Cancelado
+
+              .order-customer
+                dl.order-details
+                  dt Cliente
+                  dd= order.customerName
+
+                  dt Dirección
+                  dd= order.address
+
+              .order-items
+                h4 Productos
+
+                .table-wrapper
+                  table.products-table
+                    thead
+                      tr
+                        th Producto
+                        th Precio unitario
+                        th Cantidad
+                        th Subtotal
+
+                    tbody
+                      each item in order.items
+                        tr
+                          td= item.productName
+
+                          td
+                            | #{item.unitPrice.toLocaleString('es-PY')} Gs.
+
+                          td= item.quantity
+
+                          td
+                            | #{item.subtotal.toLocaleString('es-PY')} Gs.
+
+              .order-total
+                strong
+                  | Total: #{order.total.toLocaleString('es-PY')} Gs.

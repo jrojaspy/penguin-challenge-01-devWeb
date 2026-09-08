@@ -16,22 +16,27 @@ html(lang="es")
         if currentUser
           small Usuario: #{currentUser.username}
 
-      nav
-        a(href="/admin") Inicio
-        a(href="/admin/products") Productos
+    nav
+      a(href="/admin") Inicio
+      a(href="/admin/products") Productos
+      a(href="/admin/orders") Pedidos
 
-        form.logout-form(
-          action="/logout"
-          method="POST"
-        )
-          button.logout-button(
-            type="submit"
-          ) Cerrar sesión
+      form.logout-form(
+        action="/logout"
+        method="POST"
+      )
+        button.logout-button(
+          type="submit"
+        ) Cerrar sesión
 
     main.container
       h2 Panel administrativo
 
       p Bienvenida al panel de gestión de Penguin Store.
 
-      .dashboard-actions
-        a.button(href="/admin/products") Gestionar productos
+    .dashboard-actions
+      a.button(href="/admin/products")
+        | Gestionar productos
+
+      a.button(href="/admin/orders")
+        | Ver pedidos
