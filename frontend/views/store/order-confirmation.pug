@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+  section.confirmation-card
+    h1 Pedido recibido
+
+    p
+      | Tu pedido fue registrado correctamente.
+
+    dl.order-summary
+      dt Número de pedido
+      dd= order._id
+
+      dt Cliente
+      dd= order.customerName
+
+      dt Dirección
+      dd= order.address
+
+      each item in order.items
+        dt Producto
+        dd= item.productName
+
+        dt Precio unitario
+        dd #{item.unitPrice.toLocaleString('es-PY')} Gs.
+
+        dt Cantidad
+        dd= item.quantity
+
+        dt Subtotal
+        dd #{item.subtotal.toLocaleString('es-PY')} Gs.
+
+      dt Total
+      dd.total
+        | #{order.total.toLocaleString('es-PY')} Gs.
+
+    a.button(href="/") Volver a la tienda

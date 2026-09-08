@@ -5,23 +5,23 @@ block content
     a.back-link(href="/") ← Volver al catálogo
 
     .product-detail-card
-      div
-        h1= product.name
+      h1= product.name
 
-        p.product-detail-description
-          = product.description
+      p.product-detail-description
+        = product.description
 
-        p.product-price.product-price-large
-          | #{product.price.toLocaleString('es-PY')} Gs.
+      p.product-price.product-price-large
+        | #{product.price.toLocaleString('es-PY')} Gs.
 
-        if product.stock > 0
-          p.stock.stock-available
-            | Stock disponible: #{product.stock}
+      if product.stock > 0
+        p.stock.stock-available
+          | Stock disponible: #{product.stock}
 
+        .product-actions
           a.button(
             href=`/orders/new?product=${product._id}`
           ) Realizar pedido
 
-        else
-          p.stock.stock-empty
-            | Producto sin stock
+      else
+        p.stock.stock-empty
+          | Producto sin stock

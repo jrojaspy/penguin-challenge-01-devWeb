@@ -1,0 +1,79 @@
+extends ../layout
+
+block content
+  section.order-section
+    a.back-link(
+      href=`/products/${product._id}`
+    ) ← Volver al producto
+
+    .order-layout
+      article.order-product-summary
+        h1 Realizar pedido
+
+        h2= product.name
+
+        p= product.description
+
+        p.product-price.product-price-large
+          | #{product.price.toLocaleString('es-PY')} Gs.
+
+        p
+          | Stock disponible: #{product.stock}
+
+      section.order-form-card
+        if errors && errors.length
+          .validation-errors
+            strong Revisa los siguientes datos:
+
+            ul
+              each error in errors
+                li= error
+
+        form(
+          action="/orders"
+          method="POST"
+        )
+          input(
+            type="hidden"
+            name="productId"
+            value=product._id
+          )
+
+          .form-group
+            label(for="customerName") Nombre
+
+            input(
+              type="text"
+              id="customerName"
+              name="customerName"
+              value=formData.customerName
+              maxlength="120"
+              required
+            )
+
+          .form-group
+            label(for="address") Dirección del iglú
+
+            textarea(
+              id="address"
+              name="address"
+              maxlength="300"
+              required
+            )= formData.address
+
+          .form-group
+            label(for="quantity") Cantidad
+
+            input(
+              type="number"
+              id="quantity"
+              name="quantity"
+              value=formData.quantity
+              min="1"
+              max=product.stock
+              step="1"
+              required
+            )
+
+          button.button(type="submit")
+            | Confirmar pedido

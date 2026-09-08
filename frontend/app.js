@@ -6,6 +6,7 @@ const express = require('express');
 const connectDatabase = require('../shared/config/database');
 
 const storeRoutes = require('./routes/storeRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(
 );
 
 app.use(storeRoutes);
+app.use(orderRoutes);
 
 async function startServer() {
   await connectDatabase();
