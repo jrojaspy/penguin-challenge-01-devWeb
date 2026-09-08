@@ -5,13 +5,19 @@ html(lang="es")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title= title
 
+    link(rel="stylesheet", href="/css/admin.css")
+
   body
-    h1 Penguin Store Admin
+    header.admin-header
+      h1 Penguin Store Admin
 
-    p Panel administrativo funcionando.
+      nav
+        a(href="/") Inicio
+        a(href="/admin/products") Productos
 
-    p Próximamente:
-    ul
-      li Gestión de productos
-      li Gestión de pedidos
-      li Autenticación
+    main.container
+      h2 Panel administrativo
+
+      p Desde este panel podrás gestionar los productos y pedidos de la tienda.
+
+      a.button(href="/admin/products") Ver productos

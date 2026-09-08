@@ -1,0 +1,55 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title= title
+
+    link(rel="stylesheet", href="/css/admin.css")
+
+  body
+    header.admin-header
+      h1 Penguin Store Admin
+
+      nav
+        a(href="/") Inicio
+        a(href="/admin/products") Productos
+
+    main.container
+      .page-header
+        div
+          h2 Productos
+          p Gestión del catálogo de Penguin Store.
+
+      if products.length === 0
+        section.empty-state
+          h3 No hay productos registrados
+          p El catálogo todavía está vacío.
+
+      else
+        .table-wrapper
+          table.products-table
+            thead
+              tr
+                th Nombre
+                th Precio
+                th Stock
+                th Estado
+                th Creado
+
+            tbody
+              each product in products
+                tr
+                  td= product.name
+
+                  td= `${product.price.toLocaleString('es-PY')} Gs.`
+
+                  td= product.stock
+
+                  td
+                    if product.active
+                      span.status.status-active Activo
+                    else
+                      span.status.status-inactive Inactivo
+
+                  td= product.createdAt.toLocaleDateString('es-PY')

@@ -5,6 +5,8 @@ const express = require('express');
 
 const connectDatabase = require('../shared/config/database');
 
+const productRoutes = require('./routes/productRoutes');
+
 const app = express();
 
 const PORT = process.env.ADMIN_PORT || 3000;
@@ -21,6 +23,8 @@ app.get('/', (req, res) => {
     title: 'Penguin Store Admin'
   });
 });
+
+app.use('/admin/products', productRoutes);
 
 async function startServer() {
   await connectDatabase();
