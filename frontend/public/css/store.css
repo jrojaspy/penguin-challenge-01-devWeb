@@ -392,3 +392,8 @@ textarea:focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 2px;
 }
+
+.order-form-card input,
+.order-form-card textarea {
+  font-size: 1rem;
+}

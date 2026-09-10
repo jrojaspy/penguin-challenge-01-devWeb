@@ -1,101 +1,84 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+extends ../layout
 
-    title= title
-
-    link(rel="stylesheet", href="/css/admin.css")
-
-  body
-    header.admin-header
+block content
+  section.page-section
+    .page-header
       div
-        h1 Penguin Store Admin
+        h1 Pedidos
 
-        if currentUser
-          small Usuario: #{currentUser.username}
+        p
+          | Pedidos realizados desde la tienda pública.
 
-      nav
-        a(href="/admin") Inicio
-        a(href="/admin/products") Productos
-        a(href="/admin/orders") Pedidos
+    if orders.length === 0
+      section.empty-state(
+        aria-labelledby="empty-orders-title"
+      )
+        h2#empty-orders-title
+          | No hay pedidos registrados
 
-        form.logout-form(
-          action="/logout"
-          method="POST"
-        )
-          button.logout-button(
-            type="submit"
-          ) Cerrar sesión
+        p
+          | Los pedidos realizados desde la tienda
+          | aparecerán aquí.
 
-    main.container
-      .page-header
-        div
-          h2 Pedidos
-          p Pedidos realizados desde la tienda pública.
+    else
+      .orders-list
+        each order in orders
+          article.order-card
+            header.order-card-header
+              div
+                h2.order-number
+                  | Pedido ##{order._id.toString().slice(-6).toUpperCase()}
 
-      if orders.length === 0
-        section.empty-state
-          h3 No hay pedidos registrados
+                time.order-date(
+                  datetime=order.createdAt.toISOString()
+                )
+                  | #{order.createdAt.toLocaleString('es-PY')}
 
-          p
-            | Los pedidos realizados desde la tienda
-            | aparecerán aquí.
+              if order.status === 'pending'
+                span.status.status-pending Pendiente
 
-      else
-        .orders-list
-          each order in orders
-            article.order-card
-              .order-card-header
-                div
-                  h3 Pedido #{order._id}
+              else if order.status === 'completed'
+                span.status.status-active Completado
 
-                  p.order-date
-                    | #{order.createdAt.toLocaleString('es-PY')}
+              else
+                span.status.status-inactive Cancelado
 
-                if order.status === 'pending'
-                  span.status.status-pending Pendiente
+            .order-customer
+              dl.order-details
+                dt Cliente
+                dd= order.customerName
 
-                else if order.status === 'completed'
-                  span.status.status-active Completado
+                dt Dirección
+                dd= order.address
 
-                else
-                  span.status.status-inactive Cancelado
+            section.order-items
+              h3 Productos
 
-              .order-customer
-                dl.order-details
-                  dt Cliente
-                  dd= order.customerName
+              .table-wrapper
+                table.products-table
+                  caption.sr-only
+                    | Productos incluidos en el pedido
 
-                  dt Dirección
-                  dd= order.address
+                  thead
+                    tr
+                      th(scope="col") Producto
+                      th(scope="col") Precio unitario
+                      th(scope="col") Cantidad
+                      th(scope="col") Subtotal
 
-              .order-items
-                h4 Productos
-
-                .table-wrapper
-                  table.products-table
-                    thead
+                  tbody
+                    each item in order.items
                       tr
-                        th Producto
-                        th Precio unitario
-                        th Cantidad
-                        th Subtotal
+                        td= item.productName
 
-                    tbody
-                      each item in order.items
-                        tr
-                          td= item.productName
+                        td
+                          | #{item.unitPrice.toLocaleString('es-PY')} Gs.
 
-                          td
-                            | #{item.unitPrice.toLocaleString('es-PY')} Gs.
+                        td= item.quantity
 
-                          td= item.quantity
+                        td
+                          | #{item.subtotal.toLocaleString('es-PY')} Gs.
 
-                          td
-                            | #{item.subtotal.toLocaleString('es-PY')} Gs.
-
-              .order-total
-                strong
-                  | Total: #{order.total.toLocaleString('es-PY')} Gs.
+            footer.order-total
+              strong
+                | Total: #{order.total.toLocaleString('es-PY')} Gs.
