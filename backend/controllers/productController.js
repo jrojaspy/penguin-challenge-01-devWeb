@@ -1,4 +1,40 @@
+const mongoose = require('mongoose');
 const Product = require('../../shared/models/Product');
+
+function normalizeProductInput(body) {
+  return {
+    name: typeof body.name === 'string' ? body.name.trim() : '',
+    description:
+      typeof body.description === 'string' ? body.description.trim() : '',
+    price: Number(body.price),
+    stock: Number(body.stock),
+    active: body.active === 'on'
+  };
+}
+
+function validateProductInput(data) {
+  if (!data.name) {
+    return 'El nombre es obligatorio.';
+  }
+
+  if (!data.description) {
+    return 'La descripción es obligatoria.';
+  }
+
+  if (!Number.isFinite(data.price) || data.price < 0) {
+    return 'El precio debe ser un número mayor o igual a 0.';
+  }
+
+  if (!Number.isInteger(data.stock) || data.stock < 0) {
+    return 'El stock debe ser un número entero mayor o igual a 0.';
+  }
+
+  return null;
+}
+
+function isValidProductId(id) {
+  return mongoose.Types.ObjectId.isValid(id);
+}
 
 async function listProducts(req, res) {
   try {
@@ -9,7 +45,7 @@ async function listProducts(req, res) {
       products
     });
   } catch (error) {
-    console.error('Error loading products:', error);
+    console.error('Error listing products:', error);
 
     res.status(500).render('admin/error', {
       title: 'Error',
@@ -21,7 +57,7 @@ async function listProducts(req, res) {
 function showCreateForm(req, res) {
   res.render('admin/products/new', {
     title: 'Nuevo producto',
-    errors: [],
+    error: null,
     product: {
       name: '',
       description: '',
@@ -33,79 +69,51 @@ function showCreateForm(req, res) {
 }
 
 async function createProduct(req, res) {
-  try {
-    const {
-      name,
-      description,
-      price,
-      stock,
-      active
-    } = req.body;
+  const data = normalizeProductInput(req.body);
+  const validationError = validateProductInput(data);
 
-    const errors = [];
-
-    if (!name || !name.trim()) {
-      errors.push('El nombre es obligatorio.');
-    }
-
-    if (!description || !description.trim()) {
-      errors.push('La descripción es obligatoria.');
-    }
-
-    const parsedPrice = Number(price);
-    const parsedStock = Number(stock);
-
-    if (price === '' || Number.isNaN(parsedPrice) || parsedPrice < 0) {
-      errors.push('El precio debe ser un número igual o mayor que cero.');
-    }
-
-    if (
-      stock === '' ||
-      Number.isNaN(parsedStock) ||
-      !Number.isInteger(parsedStock) ||
-      parsedStock < 0
-    ) {
-      errors.push('El stock debe ser un número entero igual o mayor que cero.');
-    }
-
-    const productData = {
-      name: name ? name.trim() : '',
-      description: description ? description.trim() : '',
-      price,
-      stock,
-      active: active === 'on'
-    };
-
-    if (errors.length > 0) {
-      return res.status(400).render('admin/products/new', {
-        title: 'Nuevo producto',
-        errors,
-        product: productData
-      });
-    }
-
-    await Product.create({
-      name: name.trim(),
-      description: description.trim(),
-      price: parsedPrice,
-      stock: parsedStock,
-      active: active === 'on'
+  if (validationError) {
+    return res.status(400).render('admin/products/new', {
+      title: 'Nuevo producto',
+      error: validationError,
+      product: {
+        ...data,
+        price: req.body.price,
+        stock: req.body.stock
+      }
     });
+  }
 
-    res.redirect('/admin/products');
+  try {
+    await Product.create(data);
+    return res.redirect('/admin/products');
   } catch (error) {
     console.error('Error creating product:', error);
 
-    res.status(500).render('admin/error', {
-      title: 'Error',
-      message: 'No se pudo crear el producto.'
+    return res.status(400).render('admin/products/new', {
+      title: 'Nuevo producto',
+      error: 'No se pudo crear el producto. Revisa los datos ingresados.',
+      product: {
+        ...data,
+        price: req.body.price,
+        stock: req.body.stock
+      }
     });
   }
 }
 
 async function showEditForm(req, res) {
+  const { id } = req.params;
+
+  if (!isValidProductId(id)) {
+    return res.status(404).render('admin/error', {
+      title: 'Producto no encontrado',
+      message: 'El producto solicitado no existe.'
+    });
+  }
+
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(id);
 
     if (!product) {
       return res.status(404).render('admin/error', {
@@ -114,15 +122,15 @@ async function showEditForm(req, res) {
       });
     }
 
-    res.render('admin/products/edit', {
+    return res.render('admin/products/edit', {
       title: 'Editar producto',
-      errors: [],
+      error: null,
       product
     });
   } catch (error) {
     console.error('Error loading product:', error);
 
-    res.status(500).render('admin/error', {
+    return res.status(500).render('admin/error', {
       title: 'Error',
       message: 'No se pudo cargar el producto.'
     });
@@ -130,107 +138,86 @@ async function showEditForm(req, res) {
 }
 
 async function updateProduct(req, res) {
-  try {
-    const {
-      name,
-      description,
-      price,
-      stock,
-      active
-    } = req.body;
+  const { id } = req.params;
 
-    const errors = [];
+  if (!isValidProductId(id)) {
+    return res.status(404).render('admin/error', {
+      title: 'Producto no encontrado',
+      message: 'El producto solicitado no existe.'
+    });
+  }
 
-    if (!name || !name.trim()) {
-      errors.push('El nombre es obligatorio.');
-    }
+  const data = normalizeProductInput(req.body);
+  const validationError = validateProductInput(data);
 
-    if (!description || !description.trim()) {
-      errors.push('La descripción es obligatoria.');
-    }
-
-    const parsedPrice = Number(price);
-    const parsedStock = Number(stock);
-
-    if (price === '' || Number.isNaN(parsedPrice) || parsedPrice < 0) {
-      errors.push('El precio debe ser un número igual o mayor que cero.');
-    }
-
-    if (
-      stock === '' ||
-      Number.isNaN(parsedStock) ||
-      !Number.isInteger(parsedStock) ||
-      parsedStock < 0
-    ) {
-      errors.push('El stock debe ser un número entero igual o mayor que cero.');
-    }
-
-    const formProduct = {
-      _id: req.params.id,
-      name: name ? name.trim() : '',
-      description: description ? description.trim() : '',
-      price,
-      stock,
-      active: active === 'on'
-    };
-
-    if (errors.length > 0) {
-      return res.status(400).render('admin/products/edit', {
-        title: 'Editar producto',
-        errors,
-        product: formProduct
-      });
-    }
-
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      {
-        name: name.trim(),
-        description: description.trim(),
-        price: parsedPrice,
-        stock: parsedStock,
-        active: active === 'on'
-      },
-      {
-        new: true,
-        runValidators: true
+  if (validationError) {
+    return res.status(400).render('admin/products/edit', {
+      title: 'Editar producto',
+      error: validationError,
+      product: {
+        _id: id,
+        ...data,
+        price: req.body.price,
+        stock: req.body.stock
       }
-    );
+    });
+  }
 
-    if (!updatedProduct) {
+  try {
+    const product = await Product.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!product) {
       return res.status(404).render('admin/error', {
         title: 'Producto no encontrado',
         message: 'El producto solicitado no existe.'
       });
     }
 
-    res.redirect('/admin/products');
+    return res.redirect('/admin/products');
   } catch (error) {
     console.error('Error updating product:', error);
 
-    res.status(500).render('admin/error', {
-      title: 'Error',
-      message: 'No se pudo actualizar el producto.'
+    return res.status(400).render('admin/products/edit', {
+      title: 'Editar producto',
+      error: 'No se pudo actualizar el producto. Revisa los datos ingresados.',
+      product: {
+        _id: id,
+        ...data,
+        price: req.body.price,
+        stock: req.body.stock
+      }
     });
   }
 }
 
 async function deleteProduct(req, res) {
-  try {
-    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+  const { id } = req.params;
 
-    if (!deletedProduct) {
+  if (!isValidProductId(id)) {
+    return res.status(404).render('admin/error', {
+      title: 'Producto no encontrado',
+      message: 'El producto solicitado no existe.'
+    });
+  }
+
+  try {
+    const product = await Product.findByIdAndDelete(id);
+
+    if (!product) {
       return res.status(404).render('admin/error', {
         title: 'Producto no encontrado',
         message: 'El producto solicitado no existe.'
       });
     }
 
-    res.redirect('/admin/products');
+    return res.redirect('/admin/products');
   } catch (error) {
     console.error('Error deleting product:', error);
 
-    res.status(500).render('admin/error', {
+    return res.status(500).render('admin/error', {
       title: 'Error',
       message: 'No se pudo eliminar el producto.'
     });

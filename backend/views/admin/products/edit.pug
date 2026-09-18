@@ -1,96 +1,93 @@
-extends ../layout
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/css/admin.css')
 
-block content
-  section.page-section
-    .page-header
+  body
+    header.admin-header
       div
-        h1 Editar producto
+        h1 Penguin Store
+        p Panel de administración
 
-        p
-          | Modifica los datos del producto seleccionado.
+      nav(aria-label='Navegación principal')
+        a(href='/admin') Inicio
+        a(href='/admin/products', aria-current='page') Productos
+        a(href='/admin/orders') Pedidos
+        form(method='POST', action='/logout')
+          button(type='submit') Cerrar sesión
 
-    if errors && errors.length
-      .validation-errors(
-        role="alert"
+    main.container
+      section.page-header
+        div
+          h2 Editar producto
+          p Actualiza los datos del producto seleccionado.
+
+        a.button.button-secondary(href='/admin/products') Volver
+
+      if error
+        p.form-error(role='alert')= error
+
+      form.product-form(
+        method='POST'
+        action=`/admin/products/${product._id}?_method=PATCH`
       )
-        strong
-          | Revisa los siguientes campos:
-
-        ul
-          each error in errors
-            li= error
-
-    form.product-form(
-      action=`/admin/products/${product._id}/edit`
-      method="POST"
-    )
-      .form-group
-        label(for="name") Nombre
-
-        input(
-          type="text"
-          id="name"
-          name="name"
-          value=product.name
-          maxlength="120"
-          required
-        )
-
-      .form-group
-        label(for="description") Descripción
-
-        textarea(
-          id="description"
-          name="description"
-          maxlength="500"
-          required
-        )= product.description
-
-      .form-row
         .form-group
-          label(for="price") Precio en guaraníes
-
+          label(for='name') Nombre
           input(
-            type="number"
-            id="price"
-            name="price"
+            id='name'
+            name='name'
+            type='text'
+            required
+            maxlength='120'
+            value=product.name
+          )
+
+        .form-group
+          label(for='description') Descripción
+          textarea(
+            id='description'
+            name='description'
+            required
+            maxlength='500'
+            rows='5'
+          )= product.description
+
+        .form-group
+          label(for='price') Precio
+          input(
+            id='price'
+            name='price'
+            type='number'
+            min='0'
+            step='1'
+            required
             value=product.price
-            min="0"
-            step="1"
-            inputmode="numeric"
-            required
           )
 
         .form-group
-          label(for="stock") Stock
-
+          label(for='stock') Stock
           input(
-            type="number"
-            id="stock"
-            name="stock"
-            value=product.stock
-            min="0"
-            step="1"
-            inputmode="numeric"
+            id='stock'
+            name='stock'
+            type='number'
+            min='0'
+            step='1'
             required
+            value=product.stock
           )
 
-      .form-group.checkbox-group
-        input(
-          type="checkbox"
-          id="active"
-          name="active"
-          checked=product.active
-        )
+        .form-check
+          input(
+            id='active'
+            name='active'
+            type='checkbox'
+            checked=product.active
+          )
+          label(for='active') Producto activo
 
-        label(for="active")
-          | Producto activo
-
-      .form-actions
-        button.button(
-          type="submit"
-        ) Guardar cambios
-
-        a.button.button-secondary(
-          href="/admin/products"
-        ) Cancelar
+        .form-actions
+          button.button(type='submit') Guardar cambios
+          a.button.button-secondary(href='/admin/products') Cancelar

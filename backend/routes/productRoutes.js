@@ -1,5 +1,4 @@
 const express = require('express');
-
 const {
   listProducts,
   showCreateForm,
@@ -12,13 +11,10 @@ const {
 const router = express.Router();
 
 router.get('/', listProducts);
-
 router.get('/new', showCreateForm);
 router.post('/', createProduct);
-
 router.get('/:id/edit', showEditForm);
-router.post('/:id/edit', updateProduct);
-
-router.post('/:id/delete', deleteProduct);
+router.patch('/:id', updateProduct);
+router.delete('/:id', deleteProduct);
 
 module.exports = router;

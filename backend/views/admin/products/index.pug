@@ -1,78 +1,66 @@
-extends ../layout
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/css/admin.css')
 
-block content
-  section.page-section
-    .page-header
+  body
+    header.admin-header
       div
-        h1 Productos
+        h1 Penguin Store
+        p Panel de administración
 
-        p
-          | Gestiona los productos disponibles
-          | en Penguin Store.
+      nav(aria-label='Navegación principal')
+        a(href='/admin') Inicio
+        a(href='/admin/products', aria-current='page') Productos
+        a(href='/admin/orders') Pedidos
+        form(method='POST', action='/logout')
+          button(type='submit') Cerrar sesión
 
-      a.button(
-        href="/admin/products/new"
-      ) Nuevo producto
+    main.container
+      section.page-header
+        div
+          h2 Productos
+          p Gestiona el catálogo disponible en la tienda.
 
-    if products.length === 0
-      section.empty-state(
-        aria-labelledby="empty-products-title"
-      )
-        h2#empty-products-title
-          | No hay productos registrados
+        a.button(href='/admin/products/new') Nuevo producto
 
-        p
-          | El catálogo todavía está vacío.
-
-        a.button(
-          href="/admin/products/new"
-        ) Crear primer producto
-
-    else
-      .table-wrapper
-        table.products-table
-          caption.sr-only
-            | Listado de productos
-
-          thead
-            tr
-              th(scope="col") Nombre
-              th(scope="col") Precio
-              th(scope="col") Stock
-              th(scope="col") Estado
-              th(scope="col") Acciones
-
-          tbody
-            each product in products
+      if products.length === 0
+        section.empty-state
+          h3 No hay productos registrados
+          p Crea el primer producto para comenzar a cargar el catálogo.
+          a.button(href='/admin/products/new') Crear producto
+      else
+        .table-wrapper
+          table.products-table
+            thead
               tr
-                td
-                  strong= product.name
+                th(scope='col') Nombre
+                th(scope='col') Precio
+                th(scope='col') Stock
+                th(scope='col') Estado
+                th(scope='col') Acciones
 
-                  if product.description
-                    p.product-description
-                      = product.description
-
-                td
-                  | #{product.price.toLocaleString('es-PY')} Gs.
-
-                td= product.stock
-
-                td
-                  if product.active
-                    span.status.status-active Activo
-                  else
-                    span.status.status-inactive Inactivo
-
-                td
-                  .actions
-                    a.button.button-small(
+            tbody
+              each product in products
+                tr
+                  td= product.name
+                  td #{product.price.toLocaleString('es-PY')} Gs.
+                  td= product.stock
+                  td
+                    if product.active
+                      span.status.status-active Activo
+                    else
+                      span.status.status-inactive Inactivo
+                  td.actions
+                    a.button.button-secondary(
                       href=`/admin/products/${product._id}/edit`
                     ) Editar
 
                     form(
-                      action=`/admin/products/${product._id}/delete`
-                      method="POST"
+                      method='POST'
+                      action=`/admin/products/${product._id}?_method=DELETE`
                     )
-                      button.button.button-danger.button-small(
-                        type="submit"
-                      ) Eliminar
+                      button.button.button-danger(type='submit') Eliminar
