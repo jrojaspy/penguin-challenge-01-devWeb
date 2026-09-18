@@ -14,12 +14,29 @@ const sessionUser = require('./middleware/sessionUser');
 const app = express();
 const PORT = process.env.ADMIN_PORT || 3000;
 
+const productUploadsDirectory = path.join(
+  __dirname,
+  '..',
+  'shared',
+  'uploads',
+  'products'
+);
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+  '/uploads/products',
+  express.static(productUploadsDirectory, {
+    fallthrough: true,
+    index: false,
+    dotfiles: 'deny'
+  })
+);
 
 app.use(
   session({
@@ -59,9 +76,11 @@ app.use((req, res) => {
 app.use((error, req, res, next) => {
   console.error(error);
 
-  res.status(500).render('admin/error', {
-    title: 'Error',
-    message: 'Ocurrió un error inesperado.'
+  res.status(error.status || 500).render('admin/error', {
+    title: error.status === 400 ? 'Solicitud inválida' : 'Error',
+    message:
+      error.publicMessage ||
+      'Ocurrió un error inesperado.'
   });
 });
 
