@@ -1,28 +1,65 @@
-extends ../layout
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(
+      name='description'
+      content=`Detalle de ${product.name} en Penguin Store.`
+    )
+    title #{product.name} | Penguin Store
+    link(rel='stylesheet', href='/css/store.css')
 
-block content
-  article.product-detail
-    a.back-link(href="/")
-      | ← Volver al catálogo
+  body
+    header.store-header
+      .store-header__inner
+        a.store-brand(href='/', aria-label='Ir al catálogo de Penguin Store')
+          span.store-brand__icon(aria-hidden='true') 🐧
+          span Penguin Store
 
-    .product-detail-card
-      h1= product.name
+        p.store-tagline Del hielo al código
 
-      p.product-detail-description
-        = product.description
+    main.container
+      nav.breadcrumb(aria-label='Migas de pan')
+        a(href='/') Catálogo
+        span(aria-hidden='true') /
+        span(aria-current='page')= product.name
 
-      p.product-price.product-price-large
-        | #{product.price.toLocaleString('es-PY')} Gs.
+      article.product-detail
+        .product-detail__media
+          if product.image
+            img.product-detail__image(
+              src=product.image
+              alt=`Imagen de ${product.name}`
+              width='900'
+              height='700'
+            )
+          else
+            .product-image-placeholder.product-image-placeholder--detail(
+              role='img'
+              aria-label=`${product.name} sin imagen disponible`
+            )
+              span(aria-hidden='true') 🐟
+              small Imagen no disponible
 
-      if product.stock > 0
-        p.stock.stock-available
-          | Stock disponible: #{product.stock}
+        .product-detail__content
+          p.eyebrow Producto
+          h1= product.name
 
-        .product-actions
-          a.button(
-            href=`/orders/new?product=${product._id}`
-          ) Realizar pedido
+          if product.stock > 0
+            span.stock-badge Disponible
+          else
+            span.stock-badge.stock-badge--empty Sin stock
 
-      else
-        p.stock.stock-empty
-          | Producto sin stock
+          p.product-detail__description= product.description
+
+          p.product-detail__price #{product.price.toLocaleString('es-PY')} Gs.
+          p.product-detail__stock Stock disponible: #{product.stock}
+
+          .product-detail__actions
+            if product.stock > 0
+              a.button(href=`/orders/new?product=${product._id}`) Comprar ahora
+            else
+              span.button.button-disabled(aria-disabled='true') Producto sin stock
+
+            a.button.button-secondary(href='/') Volver al catálogo

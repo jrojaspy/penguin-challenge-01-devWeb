@@ -1,51 +1,82 @@
-extends ../layout
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(
+      name='description'
+      content='Penguin Store: tienda online de productos para pingüinos, renderizada completamente en el servidor.'
+    )
+    title= title
+    link(rel='stylesheet', href='/css/store.css')
 
-block content
-  section.hero
-    h1 Tienda de los Pingüinos
+  body
+    header.store-header
+      .store-header__inner
+        a.store-brand(href='/', aria-label='Ir al catálogo de Penguin Store')
+          span.store-brand__icon(aria-hidden='true') 🐧
+          span Penguin Store
 
-    p
-      | Compra productos desde tu iglú
-      | mediante una experiencia completamente
-      | renderizada desde el servidor.
+        p.store-tagline Del hielo al código
 
-  section.catalog(
-    aria-labelledby="catalog-title"
-  )
-    .section-header
-      h2#catalog-title Productos
+    main.container
+      section.catalog-hero
+        p.eyebrow Tienda online
+        h1 Productos para una vida más cool
+        p Compra desde tu iglú. Sin gritos de Larry y sin JavaScript en el navegador.
 
-      p
-        | Explora los productos disponibles.
-
-    if products.length === 0
-      .empty-state
-        h3 No hay productos disponibles
-
-        p
-          | El catálogo está vacío por el momento.
-
-    else
-      .product-grid
-        each product in products
-          article.product-card
-            .product-card-content
-              h3= product.name
-
-              p.product-description
-                = product.description
-
-              .product-meta
-                span.product-price
-                  | #{product.price.toLocaleString('es-PY')} Gs.
-
-                if product.stock > 0
-                  span.stock.stock-available
-                    | Disponible
-                else
-                  span.stock.stock-empty
-                    | Sin stock
-
-              a.button(
+      if products.length === 0
+        section.empty-state
+          .empty-state__icon(aria-hidden='true') 🧊
+          h2 No hay productos disponibles
+          p Vuelve más tarde para revisar el catálogo.
+      else
+        section.products-grid(aria-label='Catálogo de productos')
+          each product in products
+            article.product-card
+              a.product-card__media(
                 href=`/products/${product._id}`
-              ) Ver producto
+                aria-label=`Ver detalle de ${product.name}`
+              )
+                if product.image
+                  img.product-card__image(
+                    src=product.image
+                    alt=`Imagen de ${product.name}`
+                    loading='lazy'
+                    width='640'
+                    height='480'
+                  )
+                else
+                  .product-image-placeholder(
+                    role='img'
+                    aria-label=`${product.name} sin imagen disponible`
+                  )
+                    span(aria-hidden='true') 🐟
+                    small Imagen no disponible
+
+              .product-card__body
+                .product-card__top
+                  h2
+                    a.product-card__title(href=`/products/${product._id}`)= product.name
+
+                  if product.stock > 0
+                    span.stock-badge Disponible
+                  else
+                    span.stock-badge.stock-badge--empty Sin stock
+
+                p.product-description= product.description
+
+                .product-card__meta
+                  p.product-price
+                    span.sr-only Precio:
+                    | #{product.price.toLocaleString('es-PY')} Gs.
+
+                  p.product-stock Stock: #{product.stock}
+
+                .product-card__actions
+                  a.button.button-secondary(href=`/products/${product._id}`) Ver detalle
+
+                  if product.stock > 0
+                    a.button(href=`/orders/new?product=${product._id}`) Comprar
+                  else
+                    span.button.button-disabled(aria-disabled='true') No disponible

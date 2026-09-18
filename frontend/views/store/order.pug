@@ -1,0 +1,99 @@
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Realizar pedido | Penguin Store
+    link(rel='stylesheet', href='/css/store.css')
+
+  body
+    header.store-header
+      .store-header__inner
+        a.store-brand(href='/', aria-label='Ir al catálogo de Penguin Store')
+          span.store-brand__icon(aria-hidden='true') 🐧
+          span Penguin Store
+
+        p.store-tagline Del hielo al código
+
+    main.container
+      nav.breadcrumb(aria-label='Migas de pan')
+        a(href='/') Catálogo
+        span(aria-hidden='true') /
+        a(href=`/products/${product._id}`)= product.name
+        span(aria-hidden='true') /
+        span(aria-current='page') Pedido
+
+      .order-layout
+        aside.order-product(aria-label='Producto seleccionado')
+          .order-product__media
+            if product.image
+              img.order-product__image(
+                src=product.image
+                alt=`Imagen de ${product.name}`
+                width='640'
+                height='480'
+              )
+            else
+              .product-image-placeholder(
+                role='img'
+                aria-label=`${product.name} sin imagen disponible`
+              )
+                span(aria-hidden='true') 🐟
+                small Imagen no disponible
+
+          .order-product__content
+            p.eyebrow Tu selección
+            h1= product.name
+            p= product.description
+            p.product-price #{product.price.toLocaleString('es-PY')} Gs.
+            p.product-stock Stock disponible: #{product.stock}
+
+        section.order-panel
+          h2 Datos del pedido
+          p Completa los datos para enviar el pedido a tu iglú.
+
+          if error
+            p.form-error(role='alert')= error
+
+          form.order-form(method='POST', action='/orders')
+            input(type='hidden', name='productId', value=product._id)
+
+            .form-group
+              label(for='customerName') Nombre
+              input(
+                id='customerName'
+                name='customerName'
+                type='text'
+                maxlength='120'
+                required
+                autocomplete='name'
+                value=formData && formData.customerName ? formData.customerName : ''
+              )
+
+            .form-group
+              label(for='address') Dirección del iglú
+              textarea(
+                id='address'
+                name='address'
+                rows='4'
+                maxlength='300'
+                required
+                autocomplete='street-address'
+              )= formData && formData.address ? formData.address : ''
+
+            .form-group
+              label(for='quantity') Cantidad
+              input(
+                id='quantity'
+                name='quantity'
+                type='number'
+                min='1'
+                max=product.stock
+                step='1'
+                required
+                value=formData && formData.quantity ? formData.quantity : 1
+              )
+
+            .form-actions
+              button.button(type='submit') Confirmar pedido
+              a.button.button-secondary(href=`/products/${product._id}`) Cancelar
