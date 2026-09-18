@@ -1,84 +1,114 @@
-extends ../layout
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/css/admin.css')
 
-block content
-  section.page-section
-    .page-header
+  body
+    header.admin-header
       div
-        h1 Pedidos
+        h1 Penguin Store
+        p Panel de administración
 
-        p
-          | Pedidos realizados desde la tienda pública.
+      nav(aria-label='Navegación principal')
+        a(href='/admin') Inicio
+        a(href='/admin/products') Productos
+        a(href='/admin/orders', aria-current='page') Pedidos
+        form(method='POST', action='/logout')
+          button(type='submit') Cerrar sesión
 
-    if orders.length === 0
-      section.empty-state(
-        aria-labelledby="empty-orders-title"
-      )
-        h2#empty-orders-title
-          | No hay pedidos registrados
+    main.container
+      section.page-header
+        div
+          h2 Pedidos
+          p Consulta los pedidos recibidos y actualiza su estado.
 
-        p
-          | Los pedidos realizados desde la tienda
-          | aparecerán aquí.
+      if error
+        p.form-error(role='alert')= error
 
-    else
-      .orders-list
-        each order in orders
-          article.order-card
-            header.order-card-header
-              div
-                h2.order-number
-                  | Pedido ##{order._id.toString().slice(-6).toUpperCase()}
+      if orders.length === 0
+        section.empty-state
+          h3 No hay pedidos registrados
+          p Los pedidos realizados desde la tienda aparecerán aquí.
+      else
+        .table-wrapper
+          table.orders-table
+            thead
+              tr
+                th(scope='col') Fecha
+                th(scope='col') Cliente
+                th(scope='col') Producto
+                th(scope='col') Cantidad
+                th(scope='col') Precio
+                th(scope='col') Total
+                th(scope='col') Dirección
+                th(scope='col') Estado
+                th(scope='col') Actualizar
 
-                time.order-date(
-                  datetime=order.createdAt.toISOString()
-                )
-                  | #{order.createdAt.toLocaleString('es-PY')}
+            tbody
+              each order in orders
+                - const firstItem = order.items && order.items.length ? order.items[0] : null
+                - const productName = firstItem ? firstItem.productName : (order.productName || 'Producto')
+                - const quantity = firstItem ? firstItem.quantity : (order.quantity || 1)
+                - const unitPrice = firstItem ? firstItem.unitPrice : (order.unitPrice || 0)
 
-              if order.status === 'pending'
-                span.status.status-pending Pendiente
+                tr
+                  td
+                    if order.createdAt
+                      time(datetime=order.createdAt.toISOString())= order.createdAt.toLocaleString('es-PY')
+                    else
+                      | —
 
-              else if order.status === 'completed'
-                span.status.status-active Completado
+                  td= order.customerName || '—'
 
-              else
-                span.status.status-inactive Cancelado
+                  td
+                    if order.items && order.items.length > 1
+                      strong #{order.items.length} productos
+                      br
+                      small= productName
+                    else
+                      = productName
 
-            .order-customer
-              dl.order-details
-                dt Cliente
-                dd= order.customerName
+                  td
+                    if order.items && order.items.length > 1
+                      = order.items.reduce((total, item) => total + item.quantity, 0)
+                    else
+                      = quantity
 
-                dt Dirección
-                dd= order.address
+                  td #{Number(unitPrice).toLocaleString('es-PY')} Gs.
 
-            section.order-items
-              h3 Productos
+                  td
+                    strong #{Number(order.total || 0).toLocaleString('es-PY')} Gs.
 
-              .table-wrapper
-                table.products-table
-                  caption.sr-only
-                    | Productos incluidos en el pedido
+                  td= order.address || '—'
 
-                  thead
-                    tr
-                      th(scope="col") Producto
-                      th(scope="col") Precio unitario
-                      th(scope="col") Cantidad
-                      th(scope="col") Subtotal
+                  td
+                    case order.status
+                      when 'completed'
+                        span.status.status-active Completado
+                      when 'cancelled'
+                        span.status.status-inactive Cancelado
+                      default
+                        span.status Pendiente
 
-                  tbody
-                    each item in order.items
-                      tr
-                        td= item.productName
+                  td
+                    form(
+                      method='POST'
+                      action=`/admin/orders/${order._id}/status?_method=PATCH`
+                    )
+                      label.sr-only(for=`status-${order._id}`) Estado del pedido
 
-                        td
-                          | #{item.unitPrice.toLocaleString('es-PY')} Gs.
+                      select(
+                        id=`status-${order._id}`
+                        name='status'
+                        required
+                      )
+                        each statusOption in allowedStatuses
+                          option(
+                            value=statusOption
+                            selected=order.status === statusOption
+                          )= statusLabels[statusOption]
 
-                        td= item.quantity
-
-                        td
-                          | #{item.subtotal.toLocaleString('es-PY')} Gs.
-
-            footer.order-total
-              strong
-                | Total: #{order.total.toLocaleString('es-PY')} Gs.
+                      button.button(type='submit') Guardar
