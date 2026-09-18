@@ -7,33 +7,26 @@ html(lang='es')
     link(rel='stylesheet', href='/css/admin.css')
 
   body
-    header.admin-header
-      div
-        h1 Penguin Store
-        p Panel de administración
-
-      nav(aria-label='Navegación principal')
-        a(href='/admin') Inicio
-        a(href='/admin/products', aria-current='page') Productos
-        a(href='/admin/orders') Pedidos
-        form(method='POST', action='/logout')
-          button(type='submit') Cerrar sesión
+    - const activePage = 'products'
+    include ../../includes/adminHeader.pug
 
     main.container
       section.page-header
         div
-          h2 Productos
-          p Gestiona el catálogo disponible en la tienda.
+          p.eyebrow Catálogo
+          h1 Productos
+          p Gestiona los productos disponibles en la tienda.
 
         a.button(href='/admin/products/new') Nuevo producto
 
       if products.length === 0
         section.empty-state
-          h3 No hay productos registrados
+          .empty-state__icon(aria-hidden='true') 🐟
+          h2 No hay productos registrados
           p Crea el primer producto para comenzar a cargar el catálogo.
           a.button(href='/admin/products/new') Crear producto
       else
-        .table-wrapper
+        .table-wrapper(tabindex='0', aria-label='Tabla de productos')
           table.products-table
             thead
               tr
@@ -43,24 +36,23 @@ html(lang='es')
                 th(scope='col') Stock
                 th(scope='col') Estado
                 th(scope='col') Acciones
-
             tbody
               each product in products
                 tr
                   td
                     if product.image
-                      img(
+                      img.admin-product-thumb(
                         src=product.image
                         alt=`Imagen de ${product.name}`
                         width='72'
                         height='72'
                         loading='lazy'
-                        style='object-fit: cover; border-radius: 10px;'
                       )
                     else
-                      span Sin imagen
+                      .admin-product-placeholder(aria-hidden='true') 🐟
 
-                  td= product.name
+                  td
+                    strong= product.name
                   td #{product.price.toLocaleString('es-PY')} Gs.
                   td= product.stock
                   td
@@ -68,14 +60,7 @@ html(lang='es')
                       span.status.status-active Activo
                     else
                       span.status.status-inactive Inactivo
-
                   td.actions
-                    a.button.button-secondary(
-                      href=`/admin/products/${product._id}/edit`
-                    ) Editar
-
-                    form(
-                      method='POST'
-                      action=`/admin/products/${product._id}?_method=DELETE`
-                    )
+                    a.button.button-secondary(href=`/admin/products/${product._id}/edit`) Editar
+                    form(method='POST' action=`/admin/products/${product._id}?_method=DELETE`)
                       button.button.button-danger(type='submit') Eliminar

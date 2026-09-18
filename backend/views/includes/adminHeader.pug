@@ -1,0 +1,26 @@
+header.admin-header
+  .admin-header__inner
+    a.store-brand(href='/admin', aria-label='Ir al panel principal de Penguin Store')
+      span.store-brand__icon(aria-hidden='true') 🐧
+      span.store-brand__text
+        strong Penguin Store
+        small Del hielo al código
+
+    nav.admin-nav(aria-label='Navegación principal')
+      a(
+        href='/admin'
+        aria-current=activePage === 'home' ? 'page' : false
+      ) Inicio
+
+      a(
+        href='/admin/products'
+        aria-current=activePage === 'products' ? 'page' : false
+      ) Productos
+
+      a(
+        href='/admin/orders'
+        aria-current=activePage === 'orders' ? 'page' : false
+      ) Pedidos
+
+      form(method='POST', action='/logout')
+        button.admin-nav__logout(type='submit') Cerrar sesión

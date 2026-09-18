@@ -1,14 +1,19 @@
-extends layout
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/css/admin.css')
 
-block content
-  section.error-state(
-    role="alert"
-  )
-    h1= title
+  body
+    - const activePage = ''
+    include ../includes/adminHeader.pug
 
-    p= message
-
-    .error-actions
-      a.button(
-        href="/admin"
-      ) Volver al panel
+    main.container
+      section.error-state(role='alert')
+        .empty-state__icon(aria-hidden='true') 🧊
+        h1= title || 'Ocurrió un error'
+        p= message || 'No fue posible completar la operación solicitada.'
+        .form-actions.form-actions--center
+          a.button(href='/admin') Volver al panel

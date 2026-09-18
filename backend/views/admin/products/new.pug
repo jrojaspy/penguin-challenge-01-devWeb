@@ -7,24 +7,15 @@ html(lang='es')
     link(rel='stylesheet', href='/css/admin.css')
 
   body
-    header.admin-header
-      div
-        h1 Penguin Store
-        p Panel de administración
-
-      nav(aria-label='Navegación principal')
-        a(href='/admin') Inicio
-        a(href='/admin/products', aria-current='page') Productos
-        a(href='/admin/orders') Pedidos
-        form(method='POST', action='/logout')
-          button(type='submit') Cerrar sesión
+    - const activePage = 'products'
+    include ../../includes/adminHeader.pug
 
     main.container
       section.page-header
         div
-          h2 Nuevo producto
-          p Agrega un producto al catálogo de la tienda.
-
+          p.eyebrow Catálogo
+          h1 Nuevo producto
+          p Agrega un producto al catálogo de Penguin Store.
         a.button.button-secondary(href='/admin/products') Volver
 
       if error
@@ -35,69 +26,37 @@ html(lang='es')
         action='/admin/products'
         enctype='multipart/form-data'
       )
-        .form-group
-          label(for='name') Nombre
-          input(
-            id='name'
-            name='name'
-            type='text'
-            required
-            maxlength='120'
-            value=product.name
-          )
+        .form-section
+          h2 Información del producto
 
-        .form-group
-          label(for='description') Descripción
-          textarea(
-            id='description'
-            name='description'
-            required
-            maxlength='500'
-            rows='5'
-          )= product.description
+          .form-group
+            label(for='name') Nombre
+            input(id='name' name='name' type='text' required maxlength='120' value=product.name)
 
-        .form-group
-          label(for='price') Precio
-          input(
-            id='price'
-            name='price'
-            type='number'
-            min='0'
-            step='1'
-            required
-            value=product.price
-          )
+          .form-group
+            label(for='description') Descripción
+            textarea(id='description' name='description' required maxlength='500' rows='5')= product.description
 
-        .form-group
-          label(for='stock') Stock
-          input(
-            id='stock'
-            name='stock'
-            type='number'
-            min='0'
-            step='1'
-            required
-            value=product.stock
-          )
+          .form-grid
+            .form-group
+              label(for='price') Precio
+              input(id='price' name='price' type='number' min='0' step='1' required value=product.price)
 
-        .form-group
-          label(for='image') Imagen del producto
-          input(
-            id='image'
-            name='image'
-            type='file'
-            accept='image/jpeg,image/png,image/webp'
-          )
-          small Formatos permitidos: JPG, PNG o WebP. Máximo 5 MB.
+            .form-group
+              label(for='stock') Stock
+              input(id='stock' name='stock' type='number' min='0' step='1' required value=product.stock)
 
-        .form-check
-          input(
-            id='active'
-            name='active'
-            type='checkbox'
-            checked=product.active
-          )
-          label(for='active') Producto activo
+        .form-section
+          h2 Imagen y disponibilidad
+
+          .form-group
+            label(for='image') Imagen del producto
+            input(id='image' name='image' type='file' accept='image/jpeg,image/png,image/webp')
+            small Formatos permitidos: JPG, PNG o WebP. Máximo 5 MB.
+
+          .form-check
+            input(id='active' name='active' type='checkbox' checked=product.active)
+            label(for='active') Producto activo
 
         .form-actions
           button.button(type='submit') Crear producto

@@ -1,28 +1,31 @@
-extends layout
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/css/admin.css')
 
-block content
-  section.dashboard-hero
-    h1 Panel administrativo
+  body
+    - const activePage = 'home'
+    include ../includes/adminHeader.pug
 
-    p
-      | Gestiona productos y revisa los pedidos
-      | realizados desde la tienda pública.
+    main.container
+      section.page-header
+        div
+          p.eyebrow Administración
+          h1 Panel principal
+          p Gestiona el catálogo y los pedidos de Penguin Store.
 
-  section.dashboard-actions(
-    aria-label="Acciones principales"
-  )
-    a.dashboard-card(
-      href="/admin/products"
-    )
-      span.dashboard-card-title Productos
+      section.admin-dashboard(aria-label='Módulos administrativos')
+        article.dashboard-card
+          .dashboard-card__icon(aria-hidden='true') 🐟
+          h2 Productos
+          p Gestiona productos, imágenes, precios, stock y disponibilidad.
+          a.button(href='/admin/products') Gestionar productos
 
-      span.dashboard-card-description
-        | Crear, editar y eliminar productos del catálogo.
-
-    a.dashboard-card(
-      href="/admin/orders"
-    )
-      span.dashboard-card-title Pedidos
-
-      span.dashboard-card-description
-        | Revisar los pedidos recibidos desde la tienda.
+        article.dashboard-card
+          .dashboard-card__icon(aria-hidden='true') 📦
+          h2 Pedidos
+          p Consulta los pedidos recibidos y actualiza su estado.
+          a.button(href='/admin/orders') Gestionar pedidos

@@ -1,65 +1,63 @@
 doctype html
-html(lang="es")
+html(lang='es')
   head
-    meta(charset="UTF-8")
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
+      name='description'
+      content='Acceso al panel administrativo de Penguin Store.'
     )
-
-    title Iniciar sesión | Penguin Store Admin
-
-    link(
-      rel="stylesheet"
-      href="/css/admin.css"
-    )
+    title Iniciar sesión | Penguin Store
+    link(rel='stylesheet', href='/css/admin.css')
 
   body.login-page
-    main.login-container
-      section.login-card(
-        aria-labelledby="login-title"
-      )
-        h1#login-title
-          | Penguin Store Admin
+    main.login-shell
+      section.login-brand-panel(aria-label='Penguin Store')
+        a.store-brand.store-brand--login(
+          href='/login'
+          aria-label='Penguin Store'
+        )
+          span.store-brand__icon(aria-hidden='true') 🐧
+          span.store-brand__text
+            strong Penguin Store
+            small Del hielo al código
 
-        p.login-description
-          | Inicia sesión para gestionar
-          | productos y pedidos.
+        .login-brand-copy
+          p.eyebrow Panel administrativo
+          h1 Gestiona la tienda desde un solo lugar
+          p
+            | Administra productos, imágenes, stock y pedidos
+            |  desde una interfaz segura renderizada en el servidor.
+
+      section.login-card
+        .login-card__header
+          p.eyebrow Acceso privado
+          h2 Iniciar sesión
+          p Ingresa tus credenciales de administrador.
 
         if error
-          .validation-errors(
-            role="alert"
-          )
-            p= error
+          p.form-error(role='alert')= error
 
-        form(
-          action="/login"
-          method="POST"
-        )
+        form.login-form(method='POST', action='/login')
           .form-group
-            label(for="username") Usuario
-
+            label(for='username') Usuario
             input(
-              type="text"
-              id="username"
-              name="username"
-              value=username
-              autocomplete="username"
+              id='username'
+              name='username'
+              type='text'
               required
+              autocomplete='username'
               autofocus
             )
 
           .form-group
-            label(for="password") Contraseña
-
+            label(for='password') Contraseña
             input(
-              type="password"
-              id="password"
-              name="password"
-              autocomplete="current-password"
+              id='password'
+              name='password'
+              type='password'
               required
+              autocomplete='current-password'
             )
 
-          button.button.button-full(
-            type="submit"
-          ) Iniciar sesión
+          button.button.login-submit(type='submit') Ingresar al panel

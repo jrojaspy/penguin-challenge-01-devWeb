@@ -7,22 +7,14 @@ html(lang='es')
     link(rel='stylesheet', href='/css/admin.css')
 
   body
-    header.admin-header
-      div
-        h1 Penguin Store
-        p Panel de administración
-
-      nav(aria-label='Navegación principal')
-        a(href='/admin') Inicio
-        a(href='/admin/products') Productos
-        a(href='/admin/orders', aria-current='page') Pedidos
-        form(method='POST', action='/logout')
-          button(type='submit') Cerrar sesión
+    - const activePage = 'orders'
+    include ../../includes/adminHeader.pug
 
     main.container
       section.page-header
         div
-          h2 Pedidos
+          p.eyebrow Operaciones
+          h1 Pedidos
           p Consulta los pedidos recibidos y actualiza su estado.
 
       if error
@@ -30,10 +22,11 @@ html(lang='es')
 
       if orders.length === 0
         section.empty-state
-          h3 No hay pedidos registrados
+          .empty-state__icon(aria-hidden='true') 📦
+          h2 No hay pedidos registrados
           p Los pedidos realizados desde la tienda aparecerán aquí.
       else
-        .table-wrapper
+        .table-wrapper(tabindex='0', aria-label='Tabla de pedidos')
           table.orders-table
             thead
               tr
@@ -46,7 +39,6 @@ html(lang='es')
                 th(scope='col') Dirección
                 th(scope='col') Estado
                 th(scope='col') Actualizar
-
             tbody
               each order in orders
                 - const firstItem = order.items && order.items.length ? order.items[0] : null
@@ -60,55 +52,28 @@ html(lang='es')
                       time(datetime=order.createdAt.toISOString())= order.createdAt.toLocaleString('es-PY')
                     else
                       | —
-
                   td= order.customerName || '—'
-
-                  td
-                    if order.items && order.items.length > 1
-                      strong #{order.items.length} productos
-                      br
-                      small= productName
-                    else
-                      = productName
-
-                  td
-                    if order.items && order.items.length > 1
-                      = order.items.reduce((total, item) => total + item.quantity, 0)
-                    else
-                      = quantity
-
+                  td= productName
+                  td= quantity
                   td #{Number(unitPrice).toLocaleString('es-PY')} Gs.
-
                   td
                     strong #{Number(order.total || 0).toLocaleString('es-PY')} Gs.
-
                   td= order.address || '—'
-
                   td
                     case order.status
                       when 'completed'
-                        span.status.status-active Completado
+                        span.status.status-completed Completado
                       when 'cancelled'
-                        span.status.status-inactive Cancelado
+                        span.status.status-cancelled Cancelado
                       default
-                        span.status Pendiente
-
+                        span.status.status-pending Pendiente
                   td
-                    form(
+                    form.order-status-form(
                       method='POST'
                       action=`/admin/orders/${order._id}/status?_method=PATCH`
                     )
                       label.sr-only(for=`status-${order._id}`) Estado del pedido
-
-                      select(
-                        id=`status-${order._id}`
-                        name='status'
-                        required
-                      )
+                      select(id=`status-${order._id}` name='status' required)
                         each statusOption in allowedStatuses
-                          option(
-                            value=statusOption
-                            selected=order.status === statusOption
-                          )= statusLabels[statusOption]
-
+                          option(value=statusOption selected=order.status === statusOption)= statusLabels[statusOption]
                       button.button(type='submit') Guardar
