@@ -30,9 +30,22 @@ html(lang='es')
       if error
         p.form-error(role='alert')= error
 
+      if product.image
+        section
+          h3 Imagen actual
+          img(
+            src=product.image
+            alt=`Imagen de ${product.name || 'producto'}`
+            width='180'
+            height='180'
+            loading='lazy'
+            style='object-fit: cover; border-radius: 12px;'
+          )
+
       form.product-form(
         method='POST'
         action=`/admin/products/${product._id}?_method=PATCH`
+        enctype='multipart/form-data'
       )
         .form-group
           label(for='name') Nombre
@@ -78,6 +91,19 @@ html(lang='es')
             required
             value=product.stock
           )
+
+        .form-group
+          label(for='image') Reemplazar imagen
+          input(
+            id='image'
+            name='image'
+            type='file'
+            accept='image/jpeg,image/png,image/webp'
+          )
+          if product.image
+            small Si no seleccionas una nueva imagen, se conservará la actual.
+          else
+            small Formatos permitidos: JPG, PNG o WebP. Máximo 5 MB.
 
         .form-check
           input(

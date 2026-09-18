@@ -37,6 +37,7 @@ html(lang='es')
           table.products-table
             thead
               tr
+                th(scope='col') Imagen
                 th(scope='col') Nombre
                 th(scope='col') Precio
                 th(scope='col') Stock
@@ -46,6 +47,19 @@ html(lang='es')
             tbody
               each product in products
                 tr
+                  td
+                    if product.image
+                      img(
+                        src=product.image
+                        alt=`Imagen de ${product.name}`
+                        width='72'
+                        height='72'
+                        loading='lazy'
+                        style='object-fit: cover; border-radius: 10px;'
+                      )
+                    else
+                      span Sin imagen
+
                   td= product.name
                   td #{product.price.toLocaleString('es-PY')} Gs.
                   td= product.stock
@@ -54,6 +68,7 @@ html(lang='es')
                       span.status.status-active Activo
                     else
                       span.status.status-inactive Inactivo
+
                   td.actions
                     a.button.button-secondary(
                       href=`/admin/products/${product._id}/edit`
